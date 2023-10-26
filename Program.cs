@@ -17,67 +17,69 @@ class Program{
 
         ChatMember loggedInUser = null;
 
+
+
         while (true)
         {
-            Console.WriteLine("1. Login");
-            Console.WriteLine("2. Send Message");
-            Console.WriteLine("3. View Messages");
-            Console.WriteLine("4. Logout");
-            Console.WriteLine("5. Exit");
-            int choice = int.Parse(Console.ReadLine());
+            while (loggedInUser == null)
+            {
+                Console.WriteLine("Please login to access the chat features.");
+                loggedInUser = ChatMember.Login(memberService);
+            }
+
+            Console.WriteLine("1. Send Message");
+            Console.WriteLine("2. View Messages");
+            Console.WriteLine("3. Logout");
+            Console.WriteLine("4. Exit");
+
+            if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 1 || choice > 4)
+            {
+                Console.WriteLine("Invalid choice. Please enter a number between 1 and 4.");
+                continue;
+            }
 
             switch (choice)
             {
                 case 1:
-                    loggedInUser = ChatMember.Login(memberService);
-                    break;
+                    Console.Write("Enter recipient username:");
+                    string recipientUsername = Console.ReadLine();
+                    ChatMember recipient = memberService.GetMemberByUsername(recipientUsername);
 
-                case 2:
-                    if (loggedInUser != null)
+                    if (recipient != null)
                     {
-                        Console.WriteLine("Enter recipient username:");
-                        string recipientUsername = Console.ReadLine();
-                        ChatMember recipient = memberService.GetMemberByUsername(recipientUsername);
-
-                        if (recipient != null)
+                        Console.WriteLine("Enter your message:");
+                        string content = Console.ReadLine();
+                        if (!string.IsNullOrEmpty(content))
                         {
-                            Console.WriteLine("Enter your message:");
-                            string content = Console.ReadLine();
                             messageService.SendMessage(loggedInUser, recipient, content);
+                            Console.WriteLine("Message sent successfully.");
                         }
                         else
                         {
-                            Console.WriteLine("Recipient not found.");
+                            Console.WriteLine("Message content cannot be empty.");
                         }
                     }
                     else
                     {
-                        Console.WriteLine("You must be logged in to send a message.");
+                        Console.WriteLine("Recipient not found.");
+                    }
+                    break;
+
+                case 2:
+                    List<PrivateMessage> userMessages = messageService.GetMessagesForUser(loggedInUser);
+                    foreach (var message in userMessages)
+                    {
+                        Console.WriteLine(message.DisplayMessage());
                     }
                     break;
 
                 case 3:
-                    if (loggedInUser != null)
-                    {
-                        List<PrivateMessage> userMessages = messageService.GetMessagesForUser(loggedInUser);
-                        foreach (var message in userMessages)
-                        {
-                            Console.WriteLine(message.DisplayMessage());
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("You must be logged in to view messages.");
-                    }
+                    loggedInUser = null;
+                    Console.WriteLine("Logged out successfully!");
                     break;
 
                 case 4:
-                    loggedInUser = null;
-                    Console.WriteLine("Logged out successfully.");
-                    break;
-
-                case 5:
-                    return; 
+                    return;
 
                 default:
                     Console.WriteLine("Invalid choice.");

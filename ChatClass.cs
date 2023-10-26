@@ -34,7 +34,7 @@ public class ChatMember
     public static ChatMember Login(MemberService memberService)
     {
 
-        Console.WriteLine("Enter username:");
+        Console.Write("Enter username:");
         string username = Console.ReadLine();
 
         Console.WriteLine("Enter password:");
