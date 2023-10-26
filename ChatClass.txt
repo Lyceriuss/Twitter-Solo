@@ -1,4 +1,7 @@
 Things to add:
 
--Error-handling
--Ability to respond to most recent received chat
+-Error-handling - DONE 80%
+-Ability to respond to most recent received chat - DONE 80%
+-Added UI and did some cleaning - DONE 80%
+
+-Make list of conversations appear after sending msg and selecting user to chat with.

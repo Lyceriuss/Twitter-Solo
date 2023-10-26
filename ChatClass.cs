@@ -37,9 +37,9 @@ public class ChatMember
         Console.Write("Enter username:");
         string username = Console.ReadLine();
 
-        Console.WriteLine("Enter password:");
+        Console.Write("Enter password:");
         string password = Console.ReadLine();
-
+        
         // Validate the user's credentials
         ChatMember member = memberService.GetMemberByUsername(username);
         if (member != null && member.Authenticate(password))
@@ -76,15 +76,31 @@ public class MessageService
 {
     private List<PrivateMessage> Messages { get; set; } = new List<PrivateMessage>();
 
-    public void SendMessage(ChatMember sender, ChatMember receiver, string content)
+    public void SendMessage(ChatMember sender, ChatMember receiver, string content, DateTime? constructor = null)
     {
-        PrivateMessage newMessage = new PrivateMessage(sender, receiver, content);
+        PrivateMessage newMessage = new PrivateMessage(sender, receiver, content, constructor);
         Messages.Add(newMessage);
     }
 
     public List<PrivateMessage> GetMessagesForUser(ChatMember member)
     {
         return Messages.Where(m => m.Receiver == member || m.Sender == member).ToList();
+    }
+    public List<(ChatMember sender, PrivateMessage message)> GetThreeRecentSendersWithMessages(ChatMember receiver)
+    {
+        // Fetch messages sent to the receiver
+        var receivedMessages = Messages.Where(m => m.Receiver == receiver).ToList();
+
+        // Group by sender and order by most recent message timestamp
+        var groupedBySender = receivedMessages
+            .GroupBy(m => m.Sender)
+            .Select(g => new { Sender = g.Key, LatestMessage = g.OrderByDescending(msg => msg.SentTime).First() })
+            .OrderByDescending(g => g.LatestMessage.SentTime)
+            .Take(3)
+            .Select(g => (g.Sender, g.LatestMessage))
+            .ToList();
+
+        return groupedBySender;
     }
 }
 
@@ -96,12 +112,12 @@ public class PrivateMessage
     public string Content { get; private set; }
     public DateTime SentTime { get; private set; }
 
-    public PrivateMessage(ChatMember sender, ChatMember receiver, string content)
+    public PrivateMessage(ChatMember sender, ChatMember receiver, string content, DateTime? constructor = null)
     {
         Sender = sender;
         Receiver = receiver;
         Content = content;
-        SentTime = DateTime.Now; // Assigns the current DateTime when the message is created
+        SentTime = constructor ?? DateTime.Now; //Uses Constructor first, otherwise it takes DateTime.
     }
 
     public string DisplayMessage()
