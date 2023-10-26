@@ -1,0 +1,4 @@
+Things to add:
+
+-Error-handling
+-Ability to respond to most recent received chat
