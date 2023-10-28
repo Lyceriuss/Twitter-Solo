@@ -1,7 +1,12 @@
-Things to add:
+
+Things Done:
 
 -Error-handling - DONE 80%
--Ability to respond to most recent received chat - DONE 80%
--Added UI and did some cleaning - DONE 80%
+-Ability to respond to most recent received chat - DONE
+-Added UI and did some cleaning - DON
+-Make list of conversations appear after sending msg and selecting user to chat with. - DONE
 
--Make list of conversations appear after sending msg and selecting user to chat with.
+To do:
+-Make code merge friendly and add documentation to all functions so i don't forget what everything does.
+
+

@@ -4,13 +4,13 @@ using System.Linq;
 
 
 
-public class ChatMember
+public class ChatMember              // Private in case user info might be sensitive
 {
-    public string Username { get; private set; }
-    public string RealName { get; private set; }
+    public string Username { get; private set; }          
+    public string RealName { get; private set; } 
     public int Age { get; private set; }
-    public string MemberID { get; private set; }
-    private string Password { get; set; }           // Private because of reasons
+    public string MemberID { get; private set; }        //An ID that will be used to identify the user in a myriad of different operations
+    private string Password { get; set; }           
 
     public ChatMember(string username, string realName, int age, string password)
     {
@@ -29,20 +29,20 @@ public class ChatMember
 
     public bool Authenticate(string password)
     {
-        return Password == password;
+        return Password == password;        //Authenticate password
     }
-    public static ChatMember Login(MemberService memberService)
+    public static ChatMember Login(MemberService memberService)         //Login function
     {
 
-        Console.Write("Enter username:");
+        Console.Write("Enter username:");                               //Promt for userName
         string username = Console.ReadLine();
 
-        Console.Write("Enter password:");
+        Console.Write("Enter password:");                               //Promt for password
         string password = Console.ReadLine();
         
         // Validate the user's credentials
         ChatMember member = memberService.GetMemberByUsername(username);
-        if (member != null && member.Authenticate(password))
+        if (member != null && member.Authenticate(password))                    //Check if there is a match
         {
             Console.WriteLine($"Logged in as {member.Username}.");
             return member;
